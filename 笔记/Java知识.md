@@ -256,25 +256,7 @@ public static <T,S> Map<T,S> test3(List<S> list,Class<T> tClass){}
 
 实现Serializable接口
 
-## 八、随手笔记
 
-1、BeanUtils
-
-使用过两个jar包下的beanUtils
-
-org.apache.commons.beanutils.BeanUtils
-
-org.springframework.beans.BeanUtils
-
-区别：
-
-- 对于copyProperties(A,B)方法，apache包下是吧B赋值给A，spring包下是吧A赋值给B
-- apache包下的方法目标对象支持泛型，可以给T赋值，spring包下不行
-- apache包下有一个populate方法，可以将map转换为对象，但实际上copyProperties也可以实现这个功能，apache包下内部会判断是否为map，然后实现方法和populate一样
-
-其他：
-
-- 还有一个类似的方法，Property.copyProperties，严格类型转换，类型和属性名完全一致，性能优于BeanUtils，且支持为null的场景。BeanUtils不支持Boolean，Integer，Long的null转换，会变成0
 
 # JavaEE
 
@@ -809,4 +791,26 @@ alter table 表名 add index 索引名(列名(长度))
 
 
 
-陆家嘴
+# <span style="color:red">随手笔记</span>
+
+1、BeanUtils
+
+使用过两个jar包下的beanUtils
+
+org.apache.commons.beanutils.BeanUtils
+
+org.springframework.beans.BeanUtils
+
+区别：
+
+- 对于copyProperties(A,B)方法，apache包下是吧B赋值给A，spring包下是吧A赋值给B
+- apache包下的方法目标对象支持泛型，可以给T赋值，spring包下不行
+- apache包下有一个populate方法，可以将map转换为对象，但实际上copyProperties也可以实现这个功能，apache包下内部会判断是否为map，然后实现方法和populate一样
+
+其他：
+
+- 还有一个类似的方法，Property.copyProperties，严格类型转换，类型和属性名完全一致，性能优于BeanUtils，且支持为null的场景。BeanUtils不支持Boolean，Integer，Long的null转换，会变成0
+
+2、fastjson
+
+fastjson1.2.28及以下的版本一个实体类最多支持32个属性，如果超过了就要升级版本或者用ObjectMapper来进行转换
