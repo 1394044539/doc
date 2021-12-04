@@ -2,7 +2,7 @@
 
 免安装版本
 
-- 8.0及以上
+- ### **8.0及以上**
 
 免安装版本，解压到任意目录即可，然后按照以下步骤来
 
@@ -142,6 +142,71 @@ FLUSH PRIVILEGES;
 #重置密码，这里可以不需要
 alter user 'root'@'localhost' identified by '自己的密码';
 ```
+
+- ### **8.0以下**
+
+1、在安装目录下创建并配置my.ini，创建data空文件夹
+
+ps：这里建议配置的时候将文件编码改成ANSI格式，避免以后增加或进行其他配置时出问题
+
+```ini
+[mysql]
+# 设置mysql客户端默认字符集
+default-character-set=utf8
+[mysqld]
+#设置3306端口
+port = 3306
+# 设置mysql的安装目录
+basedir=D:/program/environment/MySql/mysql-5.7.19-winx64
+# 设置mysql数据库的数据的存放目录
+datadir=D:/program/environment/MySql/mysql-5.7.19-winx64/data
+# 允许最大连接数
+max_connections=200
+# 服务端使用的字符集默认为8比特编码的latin1字符集
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+# 缓存查询
+explicit_defaults_for_timestamp=true
+```
+
+2、环境变量配置（可配置可不配置）
+
+在环境变量的PATH中增加 “安装路径+/bin”
+
+3、初始化mysql
+
+以管理员身份打开cmd，进入mysql的安装目录
+
+输入命令：mysqld --install;
+
+成功会提示：Service successfully installed
+
+2）初始化mysql：
+
+输入命令：mysqld --initialize --user=root --console
+
+此时会创建data文件夹，并打印日志，找到最后几行root@localhost后有一串字符，这是<span style='color:red'>mysql的初始密码</span>，后面要用到。如果正常打印则初始化成功
+
+3）启动mysql：
+
+输入命令：net start mysql; 
+
+mysql会启动服务，提示mysql服务正在启动，mysql服务启动成功（关闭命令：net stop mysql）
+
+4）进入mysql：
+
+这一步主要是为了修改root的初始配置和<span style='color:red'>密码</span>
+
+输入命令：mysql -u root -p;
+
+进入mysql，提示输入密码，输入之前mysql的初始密码（如果这里忘记初始密码，可以手动删除data文件，然后回到第2步；或在my.ini中[mysqld] 添加skip-grant-tables跳过密码验证）
+
+5）修改密码
+
+set password for root@localhost=password('你的密码');
+
+
 
 ### 2、mysql语法与随手笔记
 
