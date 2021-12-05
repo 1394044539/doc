@@ -17,3 +17,13 @@ npm config set cache "C:\node\node_cache"
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 ```
 
+4、扩展
+
+- 有时候需要删除node_modules ，但是会因为各种原因删不掉(文件名过长或权限不足)，可以通过以下两个命令解决
+
+  ```node
+  npm install -g rimraf
+  rimraf node_modules
+  ```
+
+  
