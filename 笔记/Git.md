@@ -21,6 +21,15 @@ $ git config --global user.email "youremail"
 $ git config --list
 ```
 
+配置gitbash中文
+
+```bat
+#gitbash
+$ git config --global core.quotepath false
+#git log
+$ git config --global core.pager more
+```
+
 3、基本命令
 
 ```bat
