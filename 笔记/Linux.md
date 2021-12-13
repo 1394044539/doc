@@ -1,6 +1,6 @@
-一、基本命令
+## 一、基本命令
 
-1、yum
+### yum
 
 安装软件(以foo-x.x.x.rpm为例）：yum install foo-x.x.x.rpm
 
@@ -23,40 +23,8 @@
 - --skip-broken 忽略依赖问题
 - --nogpgcheck 忽略GPG验证
 
-二、Linux基本配置
+### 1、基本命令
 
-CentOS 有个很方便的软件安装工具yum，但是默认安装完CentOS，系统里使用的是国外的CentOS更新源，
-
-这就造成了我们使用默认更新源安装或者更新软件时速度很慢的问题，甚至更新失败。
-为了使用yum工具能快速的安装更新软件，我们需要将默认的yum更新源配置为国内的更新源。
-
-
-
-查看密码
-
-grep 'password' /var/log/mysqld.log
-
-docker run -p 3306:3306 --name mysql02 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.5
-
-```
-wget http://repo.mysql.com/MySQL-server-5.5.15-1.linux2.6.x86_64.rpm
-```
-
-阿里云的源
-
-```
-wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo 
-```
-
-或者网易云的源
-
-```
-wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
-yum clean all
-yum makecache
-```
-
-一、基本命令
 1.1 关机和重启
 关机
     shutdown -h now        立刻关机
@@ -76,7 +44,8 @@ man命令（命令说明书）
   man shutdown
   注意：man shutdown打开命令说明书之后，使用按键q退出
 
-二、目录操作命令
+### 2、目录操作命令
+
 2.1 目录切换 cd
 命令：cd 目录
 
@@ -138,7 +107,8 @@ rm -rf /*    【自杀命令！慎用！慎用！慎用！】将根目录下的�
 命令：find 目录 参数 文件名称
 示例：find /usr/tmp -name 'a*'    查找/usr/tmp目录下的所有以a开头的目录或文件
 
-三、文件操作命令
+### 3、文件操作命令
+
 3.1 文件操作【增，删，改，查】
 3.1.1 新建文件【增】touch
 命令：touch 文件名
@@ -234,12 +204,15 @@ rwx：r代表可读，w代表可写，x代表该文件是一个可执行文件�
 第三段（最后3位）：代表的是其他用户的权限
 
    421  421  421
+
 -  rw-   ---     ---
 
 命令：chmod +x aaa.txt
 或者采用8421法
 命令：chmod 100 aaa.txt
-四、压缩文件操作
+
+### 4、压缩文件操作
+
 4.1 打包和压缩
 Windows的压缩文件的扩展名  .zip/.rar
 linux中的打包文件：aa.tar      
@@ -271,7 +244,8 @@ tar -xvf ab.tar -C /usr------C代表指定解压的位置
 
 
 
-五、查找命令
+### 5、查找命令
+
 5.1 grep
 grep命令是一种强大的文本搜索工具
 
@@ -315,7 +289,9 @@ which命令的作用是在PATH变量指定的路径中，搜索某个系统命�
 
 which pwd  查找pwd命令所在路径 
 which java  查找path中java的路径 
-六、su、sudo
+
+### 6、su、sudo
+
 6.1 su
 su用于用户之间的切换。但是切换前的用户依然保持登录状态。如果是root 向普通或虚拟用户切换不需要密码，反之普通用户切换到其它任何用户都需要密码验证。
 
@@ -341,7 +317,9 @@ hadoop  ALL=(ALL)   ALL
 只允许hadoop用户以root身份执行ls 、cat命令，并且执行时候免输入密码。 
 配置文件中： 
 hadoop  ALL=NOPASSWD:  /bin/ls, /bin/cat 
-七、系统服务
+
+### 7、系统服务
+
 service iptables status  --查看iptables服务的状态
 service iptables start  --开启iptables服务
 service iptables stop  --停止iptables服务
@@ -349,7 +327,9 @@ service iptables restart  --重启iptables服务
 
 chkconfig iptables off  --关闭iptables服务的开机自启动
 chkconfig iptables on  --开启iptables服务的开机自启动
-八、网络管理
+
+### 8、网络管理
+
 8.1 主机名配置
 [root@node1 ~]# vi /etc/sysconfig/network
 NETWORKING=yes
@@ -366,7 +346,9 @@ HOSTNAME=node1
 192.168.52.201  node1
 192.168.52.202  node2
 192.168.52.203  node3
-九、定时任务指令crontab 配置
+
+### 9、定时任务指令crontab 配置
+
 crontab是Unix和Linux用于设置定时任务的指令。通过crontab命令，可以在固定间隔时间,执行指定的系统指令或shell脚本。时间间隔的单位可以是分钟、小时、日、月、周及以上的任意组合。
 
 crontab安装：
@@ -444,8 +426,11 @@ crontab -e
 每天18 : 00至23 : 00之间每隔30分钟重启apache。
 0,30   18-23    *   *   *   service httpd restart
 晚上11点到早上7点之间，每隔一小时重启apache
+
 *  23-7/1    *   *   *   service httpd restart
-十、其他命令
+
+### 10、其他命令
+
 10.1 查看当前目录：pwd
 命令：pwd     查看当前目录路径
 
@@ -506,3 +491,59 @@ esc后:
 复制一行内容：y+y
 
 粘贴复制的内容：p
+
+## 二、Linux基本配置
+
+CentOS 有个很方便的软件安装工具yum，但是默认安装完CentOS，系统里使用的是国外的CentOS更新源，
+
+这就造成了我们使用默认更新源安装或者更新软件时速度很慢的问题，甚至更新失败。
+为了使用yum工具能快速的安装更新软件，我们需要将默认的yum更新源配置为国内的更新源。
+
+查看密码
+
+grep 'password' /var/log/mysqld.log
+
+docker run -p 3306:3306 --name mysql02 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.5
+
+```
+wget http://repo.mysql.com/MySQL-server-5.5.15-1.linux2.6.x86_64.rpm
+```
+
+阿里云的源
+
+```
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo 
+```
+
+或者网易云的源
+
+```
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
+yum clean all
+yum makecache
+```
+
+## 三、Shell脚本
+
+### 1、选择解释器
+
+在shell脚本中，#表示注释，而#! 表示引用，用来定义使用哪种sh解释器来解释脚本，一般文件第一行都需要输入下面的内容。
+
+```sh
+#!bin/bash
+```
+
+**这里解释一下#!bin/bash和#!/bin/sh的区别：**
+
+#!/bin/sh就相当于#!/bin/bash--posix，posix相当于一种规范，具体可以百度
+
+### 2、windows往Linux上复制文件
+
+可能会报错syntax error near unexpected token `$'\r''，需要输入如下代码
+
+```sh
+sed -i 's/\r//g' demo.sh
+```
+
+### 3、语法
+
