@@ -116,46 +116,68 @@ Web服务器解析请求，定位请求资源。服务器将资源复本写到TC
 - 协议版本：例如HTTP/1.1
 - 状态码：<a href="#statusCode">见4</a>
 - 响应头：<a href="#header">见8</a>
-- 响应内容：<a href="#header"><a href="#content">见9</a></a>
+- 响应内容：<a href="#content">见9</a>
 
 ### 8、请求头/响应头信息<span id='header'></span>
 
-以下只列出常见的，请求头是可以自定义的
+以下只列出部分，请求头是可以自定义的，标黑的是常见的需要有一定了解的请求头
 
-|                         | 解释                                                         | 示例                                                        |
-| ----------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
-| **Accept**              | **指定客户端能够接收的内容类型**                             | **Accept: text/plain, text/html**                           |
-| **Accept-Charset**      | **浏览器可以接受的字符编码集。**                             | **Accept-Charset: iso-8859-5**                              |
-| **Accept-Encoding**     | **指定浏览器可以支持的web服务器返回内容压缩编码类型。**      | **Accept-Encoding: compress, gzip**                         |
-| **Accept-Language**     | **浏览器可接受的语言**                                       | **Accept-Language: en,zh**                                  |
-| **Accept-Ranges**       | **可以请求网页实体的一个或者多个子范围字段**                 | **Accept-Ranges: bytes**                                    |
-| **Authorization**       | **HTTP授权的授权证书**                                       | **Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==**       |
-| **Cache-Control**       | **指定请求和响应遵循的缓存机制**                             | **Cache-Control: no-cache**                                 |
-| **Connection**          | **表示是否需要持久连接。（HTTP 1.1默认进行持久连接）**       | **Connection: close**                                       |
-| **Cookie**              | **HTTP请求发送时，会把保存在该请求域名下的所有cookie值一起发送给web服务器。** | **Cookie: $Version=1; Skin=new;**                           |
-| **Content-Length**      | **请求的内容长度**                                           | **Content-Length: 348**                                     |
-| **Content-Type**        | **请求的与实体对应的MIME信息**                               | **Content-Type: application/x-www-form-urlencoded**         |
-| **Date**                | **请求发送的日期和时间**                                     | **Date: Tue, 15 Nov 2010 08:12:31 GMT**                     |
-| **Expect**              | **请求的特定的服务器行为**                                   | **Expect: 100-continue**                                    |
-| **From**                | **发出请求的用户的Email**                                    | **From: user@email.com**                                    |
-| **Host**                | **指定请求的服务器的域名和端口号**                           | **Host: www.zcmhi.com**                                     |
-| **If-Match**            | **只有请求内容与实体相匹配才有效**                           | **If-Match: “737060cd8c284d8af7ad3082f209582d”**            |
-| **If-Modified-Since**   | **如果请求的部分在指定时间之后被修改则请求成功，未被修改则返回304代码** | **If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT**        |
-| **If-None-Match**       | **如果内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变** | **If-None-Match: “737060cd8c284d8af7ad3082f209582d”**       |
-| **If-Range**            | **如果实体未改变，服务器发送客户端丢失的部分，否则发送整个实体。参数也为Etag** | **If-Range: “737060cd8c284d8af7ad3082f209582d”**            |
-| **If-Unmodified-Since** | **只在实体在指定时间之后未被修改才请求成功**                 | **If-Unmodified-Since: Sat, 29 Oct 2010 19:43:31 GMT**      |
-| **Max-Forwards**        | **限制信息通过代理和网关传送的时间**                         | **Max-Forwards: 10**                                        |
-| **Pragma**              | **用来包含实现特定的指令**                                   | **Pragma: no-cache**                                        |
-| **Proxy-Authorization** | **连接到代理的授权证书**                                     | **Proxy-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==** |
-| **Range**               | **只请求实体的一部分，指定范围**                             | **Range: bytes=500-999**                                    |
-| **Referer**             | **先前网页的地址，当前请求网页紧随其后,即来路**              | **Referer: http://www.zcmhi.com/archives/71.html**          |
-| **TE**                  | **客户端愿意接受的传输编码，并通知服务器接受接受尾加头信息** | **TE: trailers,deflate;q=0.5**                              |
-| **Upgrade**             | **向服务器指定某种传输协议以便服务器进行转换（如果支持）**   | **Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11**          |
-| **User-Agent**          | **User-Agent的内容包含发出请求的用户信息**                   | **User-Agent: Mozilla/5.0 (Linux; X11)**                    |
-| **Via**                 | **通知中间网关或代理服务器地址，通信协议**                   | **Via: 1.0 fred, 1.1 nowhere.com (Apache/1.1)**             |
-| **Warning**             | **关于消息实体的警告信息**                                   | **Warn: 199 Miscellaneous warning**                         |
+|                     | 解释                                                         | 示例                                                    |
+| ------------------- | ------------------------------------------------------------ | ------------------------------------------------------- |
+| **Accept**          | **指定客户端能够接收的内容类型，接受任意的只需要写\*/*即可** | **Accept: text/plain, text/html**                       |
+| Accept-Charset      | 浏览器可以接受的字符编码集。                                 | Accept-Charset: iso-8859-5                              |
+| Accept-Encoding     | 指定浏览器可以支持的web服务器返回内容压缩编码类型。          | Accept-Encoding: compress, gzip                         |
+| **Accept-Language** | **浏览器可接受的语言**                                       | **Accept-Language: en,zh**                              |
+| Accept-Ranges       | 可以请求网页实体的一个或者多个子范围字段                     | Accept-Ranges: bytes                                    |
+| Authorization       | HTTP授权的授权证书                                           | Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==       |
+| Cache-Control       | 指定请求和响应遵循的缓存机制                                 | Cache-Control: no-cache                                 |
+| Connection          | 表示是否需要持久连接。（HTTP 1.1默认进行持久连接）           | Connection: close                                       |
+| Cookie              | HTTP请求发送时，会把保存在该请求域名下的所有cookie值一起发送给web服务器。 | Cookie: $Version=1; Skin=new;                           |
+| Content-Length      | 请求的内容长度                                               | Content-Length: 348                                     |
+| **Content-Type**    | **请求的与实体对应的MIME信息**                               | <a href="#content">详细例子</a>                         |
+| Date                | 请求发送的日期和时间                                         | Date: Tue, 15 Nov 2010 08:12:31 GMT                     |
+| Expect              | 请求的特定的服务器行为                                       | Expect: 100-continue                                    |
+| From                | 发出请求的用户的Email                                        | From: user@email.com                                    |
+| Host                | 指定请求的服务器的域名和端口号                               | Host: www.zcmhi.com                                     |
+| If-Match            | 只有请求内容与实体相匹配才有效                               | If-Match: “737060cd8c284d8af7ad3082f209582d”            |
+| If-Modified-Since   | 如果请求的部分在指定时间之后被修改则请求成功，未被修改则返回304代码 | If-Modified-Since: Sat, 29 Oct 2010 19:43:31 GMT        |
+| If-None-Match       | 如果内容未改变返回304代码，参数为服务器先前发送的Etag，与服务器回应的Etag比较判断是否改变 | If-None-Match: “737060cd8c284d8af7ad3082f209582d”       |
+| If-Range            | 如果实体未改变，服务器发送客户端丢失的部分，否则发送整个实体。参数也为Etag | If-Range: “737060cd8c284d8af7ad3082f209582d”            |
+| If-Unmodified-Since | 只在实体在指定时间之后未被修改才请求成功                     | If-Unmodified-Since: Sat, 29 Oct 2010 19:43:31 GMT      |
+| Max-Forwards        | 限制信息通过代理和网关传送的时间                             | Max-Forwards: 10                                        |
+| Pragma              | 用来包含实现特定的指令                                       | Pragma: no-cache                                        |
+| Proxy-Authorization | 连接到代理的授权证书                                         | Proxy-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ== |
+| Range               | 只请求实体的一部分，指定范围                                 | Range: bytes=500-999                                    |
+| Referer             | 先前网页的地址，当前请求网页紧随其后,即来路                  | Referer: http://www.zcmhi.com/archives/71.html          |
+| TE                  | 客户端愿意接受的传输编码，并通知服务器接受接受尾加头信息     | TE: trailers,deflate;q=0.5                              |
+| Upgrade             | 向服务器指定某种传输协议以便服务器进行转换（如果支持）       | Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11          |
+| **User-Agent**      | **User-Agent的内容包含发出请求的用户信息**                   | **User-Agent: Mozilla/5.0 (Linux; X11)**                |
+| Via                 | 通知中间网关或代理服务器地址，通信协议                       | Via: 1.0 fred, 1.1 nowhere.com (Apache/1.1)             |
+| Warning             | 关于消息实体的警告信息                                       | Warn: 199 Miscellaneous warning                         |
 
 ### 9、请求内容/响应内容信息<span id='content'></span>
+
+根据Content-Type不同，所出现的内容不同，举几个常见的例子
+
+- html数据(一般作为响应内容)：text/html; charset=utf-8
+
+  返回html格式的数据，一般都是作为页面跳转，或者把内容嵌入到当前页面中去
+
+- 表单的默认提交格式：application/x-www-form-urlencoded
+
+  作为key->value的格式进行表单提交，html默认的表单提交就是这种格式
+
+- 表单上传文件格式(一般作为请求内容)：multipart/form-data
+
+  formData表单格式，这种一般用于文件上传，可以吧文件作为表单的一个属性一起上传，而不是作为二进制流
+
+- json数据：application/json
+
+  json格式数据，可作为请求内容也可作为响应内容，常用的异步数据交互都用这种格式
+
+- 二进制流格式(用于文件下载)：application/octet-stream
+
+  响应内容中一堆看不懂的内容，如果不是乱码，基本上就是二进制流的形式，需要前端进行特殊处理
 
 ## 二、HTTPS
 
