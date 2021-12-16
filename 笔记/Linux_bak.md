@@ -1,0 +1,712 @@
+## 一、概述
+
+Linux和windows一样是操作系统，比windows稳定，大部分时候我们都是把服务部署在Linux上的，且没有可视化界面，因此学会使用Linux的命令是非常重要的，一些Linux的东西都会在命令中进行讲解
+
+实际上Linux中的命令非常非常多，这里也只会列出一部分进行讲解
+
+## 二、Linux一些配置
+
+CentOS 有个很方便的软件安装工具yum，但是默认安装完CentOS，系统里使用的是国外的CentOS更新源，
+
+这就造成了我们使用默认更新源安装或者更新软件时速度很慢的问题，甚至更新失败。
+为了使用yum工具能快速的安装更新软件，我们需要将默认的yum更新源配置为国内的更新源。
+
+查看密码
+
+grep 'password' /var/log/mysqld.log
+
+docker run -p 3306:3306 --name mysql02 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.5
+
+```
+wget http://repo.mysql.com/MySQL-server-5.5.15-1.linux2.6.x86_64.rpm
+```
+
+阿里云的源
+
+```
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo 
+```
+
+或者网易云的源
+
+```
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
+yum clean all
+yum makecache
+```
+
+## 二、基本命令
+
+### 全局参数
+
+#### 1、--help
+
+描述：帮助，接在命令后面，用来查看命令的参数和意思
+
+用法：
+
+```
+任意命令 --help
+```
+
+### 系统相关
+
+#### 1、yum
+
+描述：用来管理软件
+
+语法：
+
+```
+yum [options] [command] [package ...]
+```
+
+参数：
+
+| 参数          | 作用         |
+| ------------- | ------------ |
+| -q            | 静默执行     |
+| -t            | 忽略错误     |
+| -R[分钟]      | 设置等待时间 |
+| -y            | 自动应答yes  |
+| --skip-broken | 忽略依赖问题 |
+| --nogpgcheck  | 忽略GPG验证  |
+
+命令：
+
+| 参数                                | 作用                     |
+| ----------------------------------- | ------------------------ |
+| check-update                        | 列出所有可更新的软件清单 |
+| install <package_name>              | 仅安装指定的软件         |
+| update <package_name>               | 更新软件                 |
+| list                                | 列出所有可安裝的软件清单 |
+| remove <package_name>               | 删除软件包               |
+| search \<keyword>                   | 查找软件包               |
+| clean [packages,headers,oldheaders] | 清除缓存                 |
+
+常用例子
+
+- 安装软件(以foo-x.x.x.rpm为例）：yum install foo-x.x.x.rpm
+
+- 删除软件：yum remove foo-x.x.x.rpm或者yum erase foo-x.x.x.rpm
+
+
+- 升级软件：yum upgrade foo或者yum update foo
+
+
+- 查询信息：yum info foo
+
+
+- 搜索软件（以包含foo字段为例）：yum search foo
+
+
+- 显示软件包依赖关系：yum deplist foo
+
+
+#### 2、shutdown
+
+描述：关键命令
+
+语法：
+
+```shell
+shutdown [-t seconds] [-rkhncfF] time [message]
+```
+
+参数说明：
+
+| 参数       | 说明                                                         |
+| ---------- | ------------------------------------------------------------ |
+| -t seconds | 设定在几秒钟之后进行关机程序。                               |
+| -k         | 并不会真的关机，只是将警告讯息传送给所有使用者               |
+| -r         | 重新开机                                                     |
+| -h         | 关机后停机                                                   |
+| -n         | 不采用正常程序来关机，用强迫的方式杀掉所有执行中的程序后自行关机 |
+| -c         | 取消目前已经进行中的关机动作                                 |
+| -f         | 关机时，不做 fsck 动作(检查 Linux 档系统)。                  |
+| -F         | 关机时，强迫进行 fsck 动作。                                 |
+| time       | 设定关机的时间                                               |
+| message    | 传送给所有使用者的警告讯息                                   |
+
+常用例子：
+
+不建议使用
+
+注意点：
+
+- 可以用now代表立即执行，shutdown -h now
+
+- 直接在命令后面接数字代表的是分钟，如shutdown -h 5指的是5分钟后关机 
+- 实际上关机有**poweroff**命令，重启有**reboot**命令
+
+### 目录/文件操作命令
+
+#### 1、cd
+
+描述：切换目录
+
+语法：
+
+```
+cd [dirName]
+```
+
+常用例子：
+
+- cd /        切换到根目录
+- cd /usr        切换到根目录下的usr目录
+- cd ../        切换到上一级目录 或者  cd ..
+- cd ~        切换到home目录
+- cd -        切换到上次访问的目录
+
+#### 2、ls
+
+描述：查看当前下的内容
+
+语法：
+
+```
+ls [-alrtAFR] [name...]
+```
+
+参数：
+
+| 参数 | 说明                                                         |
+| ---- | ------------------------------------------------------------ |
+| -a   | 显示所有文件及目录 (**.** 开头的隐藏文件也会列出)            |
+| -l   | 除文件名称外，亦将文件型态、权限、拥有者、文件大小等资讯详细列出 |
+| -r   | 将文件以相反次序显示(原定依英文字母次序)                     |
+| -t   | 将文件依建立时间之先后次序列出                               |
+| -A   | 同 -a ，但不列出 "." (目前目录) 及 ".." (父目录)             |
+| -F   | 在列出的文件名称后加一符号；例如可执行档则加 "*", 目录则加 "/" |
+| -R   | 若目录下有文件，则以下之文件亦皆依序列出                     |
+
+常用例子：
+
+- 查看所有文件的详细内容：
+
+  ```shell
+  #ll就是ls -l
+  ls -l
+  ll
+  ```
+
+- 查看隐藏的文件：
+
+  ```shell
+  ls -a
+  #可以和-l结合着使用
+  ls -al
+  ```
+
+#### 3、mkdir
+
+描述：创建文件夹
+
+语法：
+
+```
+mkdir [-p] dirName
+```
+
+参数：
+
+| 参数 |                             说明                             |
+| ---- | :----------------------------------------------------------: |
+| -p   | 递归创建，按照路径创建时，父级路径不存在，如果不加参数，会报错，加上-p则会一起创建 |
+
+常用例子：
+
+- 在当前目录创建文件夹：mkdir test
+
+#### 4、rmdir
+
+描述：删除空文件夹
+
+语法：
+
+```
+rmdir [-p] dirName
+```
+
+参数：
+
+| 参数 |                             说明                             |
+| ---- | :----------------------------------------------------------: |
+| -p   | 递归删除空文件夹，按照路径删除时，父级文件夹下面为空会一起删除 |
+
+常用例子：
+
+不用，一般只用rm命令，rmdir只能删除空文件，并不实用
+
+#### **5、*rm**
+
+描述：删除文件/文件夹
+
+语法：
+
+```
+rm [options] name...
+```
+
+参数：
+
+| 参数 | 说明                           |
+| ---- | ------------------------------ |
+| -i   | 删除前逐一询问确认，默认会询问 |
+| -f   | 无需确认                       |
+| -r   | 递归删除                       |
+
+常用例子：
+
+- 删除某文件/文件夹：
+
+  ```shell
+  rm -rf 文件名/文件夹名
+  ```
+
+- 删除当前目录下的全部文件：
+
+  ```shell
+  rm -rf *
+  ```
+
+注意点：
+
+- 打死都不要使用rm -rf /，会删掉整个系统的全部目录，而且不可恢复
+
+#### 6、cp
+
+描述：复制文件/文件夹
+
+语法：
+
+```shell
+#文件
+cp [options] source dest
+#文件夹
+cp [options] source... directory
+```
+
+
+
+删除文件：
+rm 文件        删除当前目录下的文件
+rm -f 文件    删除当前目录的的文件（不询问）
+
+删除目录：
+rm -r aaa    递归删除当前目录下的aaa目录
+rm -rf aaa    递归删除当前目录下的aaa目录（不询问）
+
+全部删除：
+rm -rf *    将当前目录下的所有目录和文件全部删除
+rm -rf /*    【自杀命令！慎用！慎用！慎用！】将根目录下的所有文件全部删除
+
+注意：rm不仅可以删除目录，也可以删除其他文件或压缩包，为了方便大家的记忆，无论删除任何目录或文件，都直接使用 rm -rf 目录/文件/压缩包
+
+2.3.3 目录修改【改】mv 和 cp
+一、重命名目录
+    命令：mv 当前目录  新目录
+    例如：mv aaa bbb    将目录aaa改为bbb
+    注意：mv的语法不仅可以对目录进行重命名而且也可以对各种文件，压缩包等进行    重命名的操作
+
+二、剪切目录
+    命令：mv 目录名称 目录的新位置
+    示例：将/usr/tmp目录下的aaa目录剪切到 /usr目录下面     mv /usr/tmp/aaa /usr
+    注意：mv语法不仅可以对目录进行剪切操作，对文件和压缩包等都可执行剪切操作
+
+三、拷贝目录
+    命令：cp -r 目录名称 目录拷贝的目标位置   -r代表递归
+    示例：将/usr/tmp目录下的aaa目录复制到 /usr目录下面     cp /usr/tmp/aaa  /usr
+    注意：cp命令不仅可以拷贝目录还可以拷贝文件，压缩包等，拷贝文件和压缩包时不    用写-r递归
+
+2.3.4 搜索目录【查】find
+命令：find 目录 参数 文件名称
+示例：find /usr/tmp -name 'a*'    查找/usr/tmp目录下的所有以a开头的目录或文件
+
+### 3、文件操作命令
+
+3.1 文件操作【增，删，改，查】
+3.1.1 新建文件【增】touch
+命令：touch 文件名
+示例：在当前目录创建一个名为aa.txt的文件        touch  aa.txt
+
+3.1.2 删除文件 【删】 rm
+命令：rm -rf 文件名
+
+3.1.3 修改文件【改】 vi或vim
+【vi编辑器的3种模式】
+    基本上vi可以分为三种状态，分别是命令模式（command mode）、插入模式（Insert mode）和底行模式（last line mode），各模式的功能区分如下：
+1) 命令行模式command mode）
+      控制屏幕光标的移动，字符、字或行的删除，查找，移动复制某区段及进入Insert mode下，或者到 last line mode。
+      命令行模式下的常用命令：
+      【1】控制光标移动：↑，↓，j
+      【2】删除当前行：dd 
+      【3】查找：/字符
+      【4】进入编辑模式：i o a
+      【5】进入底行模式：:
+      
+2) 编辑模式（Insert mode）
+      只有在Insert mode下，才可以做文字输入，按「ESC」键可回到命令行模式。
+      编辑模式下常用命令：
+      【1】ESC 退出编辑模式到命令行模式；
+      
+3) 底行模式（last line mode）
+     将文件保存或退出vi，也可以设置编辑环境，如寻找字符串、列出行号……等。
+     底行模式下常用命令：
+     【1】退出编辑：   :q
+     【2】强制退出：   :q!
+     【3】保存并退出：  :wq
+
+打开文件
+
+命令：vi 文件名
+示例：打开当前目录下的aa.txt文件     vi aa.txt 或者 vim aa.txt
+
+注意：使用vi编辑器打开文件后，并不能编辑，因为此时处于命令模式，点击键盘i/a/o进入编辑模式。
+
+编辑文件
+
+使用vi编辑器打开文件后点击按键：i ，a或者o即可进入编辑模式。
+
+i:在光标所在字符前开始插入
+a:在光标所在字符后开始插入
+o:在光标所在行的下面另起一新行插入
+
+保存或者取消编辑
+
+保存文件：
+
+第一步：ESC  进入命令行模式
+第二步：:     进入底行模式
+第三步：wq     保存并退出编辑
+
+取消编辑：
+
+第一步：ESC  进入命令行模式
+第二步：:     进入底行模式
+第三步：q!     撤销本次修改并退出编辑
+
+3.1.4 文件的查看【查】
+文件的查看命令：cat/more/less/tail
+
+cat：看最后一屏
+
+示例：使用cat查看/etc/sudo.conf文件，只能显示最后一屏内容
+cat sudo.conf
+
+more：百分比显示
+
+示例：使用more查看/etc/sudo.conf文件，可以显示百分比，回车可以向下一行，空格可以向下一页，q可以退出查看
+more sudo.conf
+
+less：翻页查看
+
+示例：使用less查看/etc/sudo.conf文件，可以使用键盘上的PgUp和PgDn向上    和向下翻页，q结束查看
+less sudo.conf
+
+tail：指定行数或者动态查看
+
+示例：使用tail -10 查看/etc/sudo.conf文件的后10行，Ctrl+C结束  
+tail -10 sudo.conf
+
+3.2 权限修改
+rwx：r代表可读，w代表可写，x代表该文件是一个可执行文件，如果rwx任意位置变为-则代表不可读或不可写或不可执行文件。
+
+示例：给aaa.txt文件权限改为可执行文件权限，aaa.txt文件的权限是-rw-------
+
+第一位：-就代表是文件，d代表是文件夹
+第一段（3位）：代表拥有者的权限
+第二段（3位）：代表拥有者所在的组，组员的权限
+第三段（最后3位）：代表的是其他用户的权限
+
+   421  421  421
+
+-  rw-   ---     ---
+
+命令：chmod +x aaa.txt
+或者采用8421法
+命令：chmod 100 aaa.txt
+
+### 4、压缩文件操作
+
+4.1 打包和压缩
+Windows的压缩文件的扩展名  .zip/.rar
+linux中的打包文件：aa.tar      
+linux中的压缩文件：bb.gz    
+linux中打包并压缩的文件：.tar.gz
+
+Linux中的打包文件一般是以.tar结尾的，压缩的命令一般是以.gz结尾的。
+而一般情况下打包和压缩是一起进行的，打包并压缩后的文件的后缀名一般.tar.gz。
+
+命令：tar -zcvf 打包压缩后的文件名 要打包的文件
+其中：z：调用gzip压缩命令进行压缩
+  c：打包文件
+  v：显示运行过程
+  f：指定文件名
+
+示例：打包并压缩/usr/tmp 下的所有文件 压缩后的压缩包指定名称为xxx.tar
+tar -zcvf ab.tar aa.txt bb.txt 
+或：tar -zcvf ab.tar  *
+
+4.2 解压
+命令：tar [-zxvf] 压缩文件    
+其中：x：代表解压
+示例：将/usr/tmp 下的ab.tar解压到当前目录下
+
+
+
+示例：将/usr/tmp 下的ab.tar解压到根目录/usr下
+tar -xvf ab.tar -C /usr------C代表指定解压的位置
+
+
+
+### 5、查找命令
+
+5.1 grep
+grep命令是一种强大的文本搜索工具
+
+使用实例：
+
+ps -ef | grep sshd  查找指定ssh服务进程 
+ps -ef | grep sshd | grep -v grep 查找指定服务进程，排除gerp身 
+ps -ef | grep sshd -c 查找指定进程个数 
+5.2 find
+find命令在目录结构中搜索文件，并对搜索结果执行指定的操作。 
+
+find 默认搜索当前目录及其子目录，并且不过滤任何结果（也就是返回所有文件），将它们全都显示在屏幕上。
+
+使用实例：
+
+find . -name "*.log" -ls  在当前目录查找以.log结尾的文件，并显示详细信息。 
+find /root/ -perm 600   查找/root/目录下权限为600的文件 
+find . -type f -name "*.log"  查找当目录，以.log结尾的普通文件 
+find . -type d | sort   查找当前所有目录并排序 
+find . -size +100M  查找当前目录大于100M的文件
+5.3 locate
+locate 让使用者可以很快速的搜寻某个路径。默认每天自动更新一次，所以使用locate 命令查不到最新变动过的文件。为了避免这种情况，可以在使用locate之前，先使用updatedb命令，手动更新数据库。如果数据库中没有查询的数据，则会报出locate: can not stat () `/var/lib/mlocate/mlocate.db': No such file or directory该错误！updatedb即可！
+
+yum -y install mlocate 如果是精简版CentOS系统需要安装locate命令
+
+使用实例：
+
+updatedb
+locate /etc/sh 搜索etc目录下所有以sh开头的文件 
+locate pwd 查找和pwd相关的所有文件
+5.4 whereis
+whereis命令是定位可执行文件、源代码文件、帮助文件在文件系统中的位置。这些文件的属性应属于原始代码，二进制文件，或是帮助文件。
+
+使用实例：
+
+whereis ls    将和ls文件相关的文件都查找出来
+5.5 which
+which命令的作用是在PATH变量指定的路径中，搜索某个系统命令的位置，并且返回第一个搜索结果。
+
+使用实例：
+
+which pwd  查找pwd命令所在路径 
+which java  查找path中java的路径 
+
+### 6、su、sudo
+
+6.1 su
+su用于用户之间的切换。但是切换前的用户依然保持登录状态。如果是root 向普通或虚拟用户切换不需要密码，反之普通用户切换到其它任何用户都需要密码验证。
+
+su test:切换到test用户，但是路径还是/root目录
+su - test : 切换到test用户，路径变成了/home/test
+su : 切换到root用户，但是路径还是原来的路径
+su - : 切换到root用户，并且路径是/root
+su不足：如果某个用户需要使用root权限、则必须要把root密码告诉此用户。
+
+退出返回之前的用户：exit
+
+6.2 sudo
+sudo是为所有想使用root权限的普通用户设计的。可以让普通用户具有临时使用root权限的权利。只需输入自己账户的密码即可。
+
+进入sudo配置文件命令：
+
+vi /etc/sudoer或者visudo
+案例：
+允许hadoop用户以root身份执行各种应用命令，需要输入hadoop用户的密码。
+hadoop  ALL=(ALL)   ALL 
+
+案例：
+只允许hadoop用户以root身份执行ls 、cat命令，并且执行时候免输入密码。 
+配置文件中： 
+hadoop  ALL=NOPASSWD:  /bin/ls, /bin/cat 
+
+### 7、系统服务
+
+service iptables status  --查看iptables服务的状态
+service iptables start  --开启iptables服务
+service iptables stop  --停止iptables服务
+service iptables restart  --重启iptables服务
+
+chkconfig iptables off  --关闭iptables服务的开机自启动
+chkconfig iptables on  --开启iptables服务的开机自启动
+
+### 8、网络管理
+
+8.1 主机名配置
+[root@node1 ~]# vi /etc/sysconfig/network
+NETWORKING=yes
+HOSTNAME=node1
+8.2 IP 地址配置
+[root@node1 ~]# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+8.3 域名映射
+/etc/hosts文件用于在通过主机名进行访问时做ip地址解析之用。所以，你想访问一个什么样的主机名，就需要把这个主机名和它对应的ip地址。
+
+[root@node1 ~]# vi /etc/hosts
+
+在最后加上
+
+192.168.52.201  node1
+192.168.52.202  node2
+192.168.52.203  node3
+
+### 9、定时任务指令crontab 配置
+
+crontab是Unix和Linux用于设置定时任务的指令。通过crontab命令，可以在固定间隔时间,执行指定的系统指令或shell脚本。时间间隔的单位可以是分钟、小时、日、月、周及以上的任意组合。
+
+crontab安装：
+
+yum install crontabs
+服务操作说明：
+
+service crond start   ## 启动服务 
+service crond stop    ## 关闭服务 
+service crond restart ## 重启服务
+9.1 命令格式
+crontab [-u user] file
+
+crontab [-u user] [ -e | -l | -r ]
+
+参数说明：
+
+-u user：用来设定某个用户的crontab服务  
+
+file：file是命令文件的名字,表示将file做为crontab的任务列表文件
+
+并载入crontab。
+
+-e：编辑某个用户的crontab文件内容。如果不指定用户，则表示编辑当前
+
+用户的crontab文件。
+
+-l：显示某个用户的crontab文件内容。如果不指定用户，则表示显示当前
+
+用户的crontab文件内容。
+
+-r：删除定时任务配置，从/var/spool/cron目录中删除某个用户的crontab
+
+文件，如果不指定用户，则默认删除当前用户的crontab文件。
+
+命令示例：
+
+crontab file [-u user] ## 用指定的文件替代目前的crontab
+crontab -l [-u user]  ## 列出用户目前的crontab
+crontab -e [-u user]  ## 编辑用户目前的crontab
+9.2 配置说明、实例
+命令：*   *    *   *   *   command  
+
+解释：分  时  日  月  周  命令
+
+第1列表示分钟1～59 每分钟用*或者 */1表示    
+
+第2列表示小时0～23（0表示0点）
+
+第3列表示日期1～31  
+
+第4列表示月份1～12  
+
+第5列标识号星期0～6（0表示星期天）  
+
+第6列要运行的命令
+
+配置实例：
+
+先打开定时任务所在的文件：
+crontab -e
+
+每分钟执行一次date命令 
+*/1 * * * * date >> /root/date.txt
+
+每晚的21:30重启apache。 
+30 21 * * * service httpd restart
+
+每月1、10、22日的4 : 45重启apache。  
+45 4 1,10,22 * * service httpd restart
+
+每周六、周日的1 : 10重启apache。 
+10 1 * * 6,0 service httpd restart
+
+每天18 : 00至23 : 00之间每隔30分钟重启apache。
+0,30   18-23    *   *   *   service httpd restart
+晚上11点到早上7点之间，每隔一小时重启apache
+
+*  23-7/1    *   *   *   service httpd restart
+
+### 10、其他命令
+
+10.1 查看当前目录：pwd
+命令：pwd     查看当前目录路径
+
+10.2 查看进程：ps -ef
+命令：ps -ef    查看所有正在运行的进程
+
+10.3 结束进程：kill
+命令：kill pid 或者 kill -9 pid(强制杀死进程)           pid:进程号
+
+10.4 网络通信命令：
+ifconfig：查看网卡信息
+
+命令：ifconfig 或 ifconfig | more
+
+ping：查看与某台机器的连接情况
+
+命令：ping ip
+
+netstat -an：查看当前系统端口
+
+命令：netstat -an
+
+搜索指定端口
+命令：netstat -an | grep 8080
+
+10.5 配置网络
+命令：setup
+
+10.6 重启网络
+命令：service network restart
+
+10.7 切换用户
+命令：su - 用户名
+
+10.8 关闭防火墙
+命令：chkconfig iptables off
+
+或者：
+
+ iptables -L;
+ iptables -F;
+ service iptables stop
+10.9 修改文件权限
+命令：chmod 777
+
+10.10 清屏
+命令：ctrl + l
+
+10.11 vi模式下快捷键
+esc后:
+
+保存并退出快捷键：shift+z+z
+
+光标跳到最后一行快捷键：shift+g
+
+删除一行：dd
+
+复制一行内容：y+y
+
+粘贴复制的内容：p
+
+
