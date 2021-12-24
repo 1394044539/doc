@@ -78,6 +78,8 @@ idea通过用户名和密码连接github似乎有一些问题，所以我推荐�
 
 相关教程：https://blog.csdn.net/qq_32614411/article/details/84951156?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.control&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.control
 
+使用秘钥的方式进行访问的话，需要在tortoiseGit的网络中的SSH客户端中配置GIT/usr/bin/ssh.exe
+
 ## 五、GIT命令
 
 1、基本命令
