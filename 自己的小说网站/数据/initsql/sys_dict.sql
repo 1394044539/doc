@@ -1,0 +1,1 @@
+INSERT INTO `sys_dict`(`dict_id`, `dict_code`, `dict_name`, `dict_value`, `dict_desc`, `dict_type`, `create_time`, `create_by`, `update_time`, `update_by`, `is_delete`) VALUES ('757256aa9beb46349a500de33dc4056a', 'NOVEL_TYPE', '小说类型', '', '小说类型', '2', '2021-09-12 10:49:34', 'fb3334023a7e4c139479c41b044c3f1f', '2021-10-29 15:05:38', 'fb3334023a7e4c139479c41b044c3f1f', '0');
