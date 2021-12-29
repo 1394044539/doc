@@ -1,8 +1,10 @@
-## 配置mysql
+## 一、安装及配置mysql
 
-免安装版本
+### 1、Windows
 
-- ### **8.0及以上**
+#### 免安装版本
+
+- ### 8.0及以上
 
 免安装版本，解压到任意目录即可，然后按照以下步骤来
 
@@ -206,11 +208,235 @@ mysql会启动服务，提示mysql服务正在启动，mysql服务启动成功�
 
 set password for root@localhost=password('你的密码');
 
+### 2、Linux
 
+#### 免安装版本
 
-## mysql的特性等
+- ### **8.0以下**
 
-### 一、事务
+**注：以下操作的各种路径，可以根据自己实际情况修改，这里只是作为例子**
+
+1、首先要去mysql的官网下载tar包
+
+- 官网的历史版本太难找了，直接贴出下载链接：https://dev.mysql.com/downloads/mysql/
+
+- 找到你要下载的版本tar包，以**Compressed TAR Archive**结尾的tar包即可
+
+- 以https://cdn.mysql.com/archives 加上tar包名字 mysql-5.7.33-linux-glibc2.12-i686.tar.gz
+
+- 在Linux中，使用命令下载，直接可以去官网上下载到当前所在目录下
+
+  ```shell
+  wget https://cdn.mysql.com/archive/mysql-5.7.33-linux-glibc2.12-i686.tar.gz
+  ```
+
+2、解压tar包
+
+```shell
+tar -xvf mysql-5.7.33-linux-glibc2.12-i686.tar.gz
+```
+
+建议改个名字
+
+```shell
+mv mysql-5.7.33-linux-glibc2.12-i686.tar.gz msql-5.7.33
+```
+
+3、创建用户用户组(根据需要，不必要可以跳过这一步直接用root)
+
+- 创建组和用户
+
+  ```shell
+  groupadd mysql
+  useradd -r -g mysql mysql
+  ```
+
+- 修改mysql目录的组
+
+  ```shell
+  mkdir -p  /data/mysql              #创建目录
+  chown mysql:mysql -R /data/mysql   #赋予权限
+  ```
+
+- 移动到mysql目录下
+
+  ```shell
+  mv msql-5.7.33 /data/mysql
+  ```
+
+4、配置my.cnf
+
+- 在etc下创建my.cnf
+
+  ```shell
+  vim /etc/my.cnf
+  ```
+
+  ```ini
+  [mysqld]
+  bind-address=0.0.0.0
+  port=3306
+  user=mysql
+  basedir=/home/mysql/dist/mysql-5.7.19 #mysql安装目录
+  datadir=/home/mysql/data/3306 #mysql数据目录
+  tmpdir=/home/mysql/data/tmp #临时目录
+  socket=/home/mysql/data/sock/mysql.sock
+  pid-file=/home/mysql/pid/mysql.pid
+  log-error=/home/mysql/log/mysql.err
+  character_set_server=utf8mb4
+  symbolic-links=0
+  explicit_defaults_for_timestamp=true
+  skip-grant-tables
+  
+  [client]
+  port=3306
+  socket=/home/mysql/data/sock/mysql.sock
+  ```
+
+- 路径可以根据自己的实际情况进行配置
+
+5、初始化mysql
+
+- 进入安装目录的bin目录下，输入命令
+
+  ```shell
+  ./mysqld --initialize --user=root
+  ```
+
+  初始化的时候可能会出现各种问题，这里可以做后续补充
+
+- 记住mysql.err中的密码
+
+- 把mysql.server复制到etc下
+
+  ```shell
+  cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql
+  ```
+
+  这样就可以使用service启动数据库
+
+- 启动数据库
+
+  ```shell
+  service mysql start
+  ```
+
+- 进入数据库
+
+  ```shell
+  mysql -u root -p
+  ```
+
+  这里也可能出现问题
+
+- 修改root密码
+
+  ```mysql
+  ALTER USER ‘root’@‘localhost’ IDENTIFIED WITH mysql_native_password BY ‘新密码’
+  ```
+
+#### yum安装
+
+#### docker安装
+
+## 二、mysql的操作
+
+### 1、认识mysql库下的user表
+
+在mysql库下，有一个user表，这里保存了用户的信息和一些权限，分别对他的字段进行简单讲解
+
+- Host：开放可连接的ip，默认localhost，%代表任意ip
+- User：用户，这里是可以重复的，因为这里是通过Host和User来区分不同的情况
+- _priv：是否具有各种权限，Y代表有，N代表无
+- plugin：密码加密方式，这个在8.0的时候需要特别注意一下，可能会出现因为加密方式不同而密码错误的情况
+- authentication_string：加密后的密码，用处不大，可以用来看看
+
+后续有很多类似 'username'@'host'的操作，username实际上就是User，host对应的就是Host，是可以直接在语句中修改的
+
+### 2、用户操作
+
+- 创建用户
+
+  ```mysql
+  CREATE USER 'username'@'host' IDENTIFIED BY 'password';
+  ```
+
+- 修改密码
+
+  有两种方式，一个是8.0以下的可以使用
+
+  ```shell
+  SET PASSWORD FOR 'username'@'host' = PASSWORD('newpassword');
+  ```
+
+  8.0以上要增加编码规则，这一条8.0以下也可以使用
+
+  ```mysql
+  ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码'
+  ```
+
+- 删除用户
+
+  ```mysql
+  DROP USER ‘username’@'host’;
+  ```
+
+### 3、用户赋权
+
+- 首先要了解用户有哪些权限
+
+  ![privileges](E:\GIT\doc\笔记\img\mysql\privileges-1640746235401.jpg)
+
+- 赋权
+
+  ```mysql
+  GRANT privileges ON databasename.tablename TO 'username'@'host';
+  ```
+
+  - privileges是上述列表中的权限，全部的话是ALL
+  - databasename.tablename是库和表名，可以使用通配符表示全部，\*.*
+
+- 收回权限
+
+  ```mysql
+  REVOKE privilege ON databasename.tablename FROM 'username'@'host';
+  ```
+
+- 查看权限
+
+  ```mysql
+  show grants; 
+  ```
+
+- 权限刷新(**每一次修改了权限必须要执行一次刷新**)
+
+  ```mysql
+  flush privileges;
+  ```
+
+### 4、常用实例
+
+- 设置root对外访问，从安全性角度不推荐，但是图方便
+
+  ```mysql
+  update user set host='%' where user='root' and host='localhost';
+  ```
+
+- 假设我需要创建一个other用户，赋予上述表中推荐的权限，依次执行下列命令
+
+  ```mysql
+  CREATE USER 'other'@'%' IDENTIFIED BY 'password';
+  
+  GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,INDEX,ALTER,CREATE VIEW,SHOW VIEW ON *.* TO 'other'@'%';
+  
+  flush privileges;
+  ```
+
+  
+
+## 三、mysql的特性等
+
+### 事务
 
 1、事务的四个特征（ACID）
 
@@ -252,7 +478,7 @@ set password for root@localhost=password('你的密码');
   - ABA现象：如果A被改成了B又被改成了A，CAS算法不知道，为了防止这种情况，每次会带上一个版本号，再对比版本号是否一致
 - 悲观锁：认为任何情况下都会有人修改数据，会在拿数据的时候上锁，适用于多写的情况下
 
-### 二、索引
+### 索引
 
 索引就是一种数据结构
 
@@ -358,3 +584,8 @@ where
 </foreach>
 ```
 
+
+
+赋权
+
+GRANT CREATE,DROP,ALTER,DELETE,INDEX,SELECT,UPDATE,CREATE VIEW,SHOW VIEW,EXECUTE,CREATE,INSERT ROUTINE,ALTER ROUTINE ON *.* TO 'other'@'%';
