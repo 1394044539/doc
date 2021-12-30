@@ -586,6 +586,15 @@ where
 
 
 
-赋权
+3、一对多，分页，按多的表查询条件来查询
 
-GRANT CREATE,DROP,ALTER,DELETE,INDEX,SELECT,UPDATE,CREATE VIEW,SHOW VIEW,EXECUTE,CREATE,INSERT ROUTINE,ALTER ROUTINE ON *.* TO 'other'@'%';
+```sql
+SELECT
+	t.novel_id,t.novel_name,
+	group_concat( DISTINCT t.type_code ) type 
+FROM
+	( SELECT a.*, b.type_code FROM novel a, novel_type_rel b WHERE a.novel_id = b.novel_id ) t 
+GROUP BY
+	t.novel_id,t.novel_name
+```
+
