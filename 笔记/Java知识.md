@@ -661,11 +661,9 @@ public class StartListener implements ApplicationListener {
 
 ## 六、Shiro
 
-## 七、Docker
 
 
-
-事务、连接语句、redis、Linux、数据结构和算法、JVM、SpringCloud
+事务、连接语句、数据结构和算法、JVM、SpringCloud
 
 
 
