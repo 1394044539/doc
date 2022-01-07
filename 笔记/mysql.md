@@ -584,16 +584,27 @@ where
 </foreach>
 ```
 
+3、一对多，分页
 
+```mysql
+select a.*,ntr.*
+from (SELECT * from novel limit 0,10) a
+left JOIN novel_type_rel ntr on ntr.novel_id = a.novel_id
+```
 
-3、一对多，分页，按多的表查询条件来查询
+- 需要手动进行分页
+- 查询出来的结果如果未使用resultMap接收需要手动分组
+- 如需count需要自己查
+- 如果对关联表进行查询会丢掉关联表的其他值，需要看业务是否需要
+
+4、一对多，分页，按多的表查询条件来查询
 
 ```sql
 SELECT
 	t.novel_id,t.novel_name,
-	group_concat( DISTINCT t.type_code ) type 
+	group_concat( DISTINCT t.type_code ) type
 FROM
-	( SELECT a.*, b.type_code FROM novel a, novel_type_rel b WHERE a.novel_id = b.novel_id ) t 
+	( SELECT a.*, b.type_code FROM novel a, novel_type_rel b WHERE a.novel_id = b.novel_id ) t
 GROUP BY
 	t.novel_id,t.novel_name
 ```
