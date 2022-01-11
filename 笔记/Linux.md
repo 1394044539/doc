@@ -1252,3 +1252,23 @@ netstat -nap | grep pid
 netstat -tunlp | grep port
 ```
 
+6、查看使用内存
+
+查看全部内存情况
+
+```shell
+df -hl
+```
+
+查看当前目录大小
+
+```shell
+du -sh
+```
+
+查看当前目录下所有文件和目录的大小
+
+```shell
+du -h
+```
+
