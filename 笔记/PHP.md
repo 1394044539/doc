@@ -147,3 +147,23 @@ strpos(string,find,start)
 
   
 
+# 三、java转php速通(论三天学会php)
+
+| 描述                                                 | JAVA                    | PHP                                                          |
+| ---------------------------------------------------- | ----------------------- | ------------------------------------------------------------ |
+| 调用，java用‘.’，php使用‘->’                         | user.getName()          | user->getName()                                              |
+| 拼接字符串                                           | "hello"+"java"          | "hello"."php"                                                |
+| 字符串长度                                           | "str".length            | strlen("str")                                                |
+| 拿到字符串第一次出现的位置，在php中不存在返回false   | "str".indexOf("s")      | strpos("str","s")                                            |
+| 拿到字符串最后一次出现的位置，在php中不存在返回false | "str".lastIndexOf("s")  | strrpos("str","s")                                           |
+| 判断字符串是否存在于另一个字符串                     | “str”.contains("s")     | 没有，一般用strstr(),或者上面的两个方法判断                  |
+| 判断非空，php中不为null返回true                      | isNotBlack()            | isset(obj)                                                   |
+| 销毁属性                                             | 没有，一般set为null     | unset("参数名")                                              |
+| 判空                                                 | isBlack()               | empty(obj)；与!isset($var) \|\| $var==false等价。“”、0、0.0、“0”、null、false、array()、声明了没有赋值的变量 |
+| 打印                                                 | System.out.println("")  | a()、var_dump()、printf()                                    |
+| 终止                                                 | exit()                  | die()                                                        |
+| 获取数组长度                                         | list.size()或arr.length | count($arr)                                                  |
+| 数组中是否存在某个值                                 | contains("")            | in_array("值","数组")                                        |
+| 数组中是否存在某个key，php中的数组相当于java中的map  | map.containsKey("")     | array_key_exists("key值","数组")                             |
+| 添加值到数组中                                       | list.add("值")          | array_push("数组","值")或arr[] = item，建议用第二种，效率高  |
+
