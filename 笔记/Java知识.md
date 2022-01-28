@@ -690,3 +690,17 @@ org.springframework.beans.BeanUtils
 2、fastjson
 
 fastjson1.2.28及以下的版本一个实体类最多支持32个属性，如果超过了就要升级版本或者用ObjectMapper来进行转换
+
+3、Pattern
+
+动态拼接正则有时候会出现正则注入的问题，java可以使用quote将拼接的正则隔开防止注入
+
+```java
+String content = Pattern.quote("正则内容")
+Pattern p = Pattern,compile(content);
+Matcher matcher = p.matcher("被校验的内容")
+if(matcger.matches()){
+    //校验成功
+}
+```
+
