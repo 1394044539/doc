@@ -119,3 +119,14 @@ const store = useStore()
 store.dispatch('increment')
 ```
 
+路由：
+
+路由传参：
+
+- params
+
+  必须和name绑定使用
+
+- query
+
+  name和path都可以使用，参数会拼接在路径后面
