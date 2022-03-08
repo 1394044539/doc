@@ -600,12 +600,16 @@ left JOIN novel_type_rel ntr on ntr.novel_id = a.novel_id
 4、一对多，分页，按多的表查询条件来查询
 
 ```sql
-SELECT
+SELECT *
+FROM
+(SELECT
 	t.novel_id,t.novel_name,
 	group_concat( DISTINCT t.type_code ) type
 FROM
 	( SELECT a.*, b.type_code FROM novel a, novel_type_rel b WHERE a.novel_id = b.novel_id ) t
 GROUP BY
-	t.novel_id,t.novel_name
+	t.novel_id,t.novel_name) t2
+WHERE 
+	t2.type like "%param%"
 ```
 

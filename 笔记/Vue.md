@@ -110,6 +110,129 @@ E:\program\ideaworkspace\web>vue -V
   - Unit Testing：单元测试
   - E2E Testing：测试模式
 
+## 项目结构：
+
+cli2和cli3的项目结构是不一样的，他们的配置方法也不一样，这个和vue的版本无关
+
+- cli2.0:
+
+  老版本并不太熟悉，所以不多写，列一张图
+
+  ![vue2project](E:\GIT\doc\笔记\img\Vue\vue2project.png)
+
+  配置文件：一般是build->webpack.base.config.js
+
+- cli3.0以及以上：
+
+  ![image-20220307141057076](E:\GIT\doc\笔记\img\Vue\image-20220307141057076.png)
+
+  - public：公共的文件，一般用来放一些全局的资源，个人开发的时候很少用
+  - src：项目主体，主要是代码
+    - assets：静态文件，用来放置静态的js，css和图片等资源
+    - component：组件，一般非视图类的vue文件会放在这个文件夹下
+    - router：路由配置
+    - store：vuex配置
+    - views：视图类的vue文件
+    - App.vue：vue项目的根页面，所有的页面都是从这个页面路由过去的
+    - main.js：核心主文件，配置vue项目，vue2和vue3有区别的，后面讲
+    - 其他：其他的都是个人开发习惯下建立的文件夹，并不是初始化自带的。如：api是封装的http请求，common是公共的js和css，utils是工具类
+  - .env：配置文件，启动项目时候的读取根据后缀来读取不同环境下的配置，后面单独讲
+  - babel.config.js：js编译器，主要作用是将es5以上的代码，转化为最简单的js，以便低版本的浏览器可以兼容，https://www.babeljs.cn/docs/
+  - package.json：我的理解是版本管理器和打包工具，有点像是maven，这里面有项目引入的包的版本，以及一些启动和打包命令的配置，后面也会讲解
+  - vue.config.js：cli3.x的配置文件，内容很多，后面会专门讲几个常用的，https://cli.vuejs.org/zh/config/#vue-config-js
+
+## VUE的项目启动与环境配置：
+
+先对上一个模块有个简单的了解，然后讲到相应的文件可以知道是干嘛的，然后cli2.0有点知识盲区，所以这里只讲3.x
+
+### 1、跨域配置
+
+前后端分离的项目一般都会存在跨域问题，大部分时候前后端都需要去解决，并且为了部署到服务器之后，方便做一些代理，这里都建议在本地也进行配置。
+
+在vue.config.js中，输入以下配置，对应的值可以根据情况去修改
+
+```js
+const fs = require('fs');
+module.exports = {
+    publicPath: '/readOnline/',
+    devServer: {
+        proxy: {
+            '/api': {
+                target: "http://localhost:8092/", // API服务所在IP及端口号
+                changeOrigin: true, // 如果设置为true,那么本地会虚拟一个服务器接收你的请求并代你发送该请求，这样就不会有跨域问题（只适合开发环境）
+                pathRewrite: {
+                    '^/api': '' // 重写路径
+                },
+            },
+            '/img': {
+                target: "http://localhost:8092/img", // API服务所在IP及端口号
+                changeOrigin: true, // 如果设置为true,那么本地会虚拟一个服务器接收你的请求并代你发送该请求，这样就不会有跨域问题（只适合开发环境）
+                pathRewrite: {
+                    '^/img': '' // 重写路径
+                },
+            }
+        },
+        // public: '100.72.181.60:8080/readOnline/',
+        // hot: true,
+        disableHostCheck: true,
+    },
+    configureWebpack: {
+        resolve: {
+            alias: {
+                '@': resolve('src')
+            }
+        }
+    },
+}
+```
+
+了解vue.config.js中的配置
+
+- publicPath：浏览器路径会多出这样一个根路径，127.0.0.1:8080/变为127.0.0.1:8080/path
+- outputDir：打包之后的文件夹名称，默认为dist
+- devServer：webpack的配置，https://webpack.js.org/configuration/dev-server/，跨域也是在这里配置的
+  - proxy：代理，具体参数看上面的demo
+- configureWebpack：https://cli.vuejs.org/zh/guide/webpack.html#%E7%AE%80%E5%8D%95%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F
+  - 本人在这里做了一个别名的操作，@可以代表src目录
+
+### 2、多环境配置与启动：
+
+- 创建.env.环境文件
+
+- 在package.json文件中，找到scripts
+
+  ```json
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "test": "vue-cli-service serve --mode test",
+    "build": "vue-cli-service build"
+  },
+  ```
+
+  如上，是以一个 "param1":"vue-cli-service param2 --mode param3，这样一个格式进行配置
+
+  - param1：启动的命令，怎么执行就按照那一行进行读取
+
+    ```shell
+    npm run param1
+    ```
+
+  - vue-cli-service：脚手架命令
+
+  - param2：实际上执行的命令，比如启动项目就是 serve，构建就是build
+
+  - --mode：读取哪个配置文件
+
+  - param3：读取的配置文件的后缀，就比如是.env.param3的后缀
+
+### 3、读取配置文件内容
+
+在任何js文件中都可以用下面这种方法读取想要的配置文件内容
+
+```javascript
+process.env.参数名
+```
+
 ## vue的基本概念和语法：
 
 ### 一、实例：
@@ -315,7 +438,7 @@ ps：因为标签直接被移除的特性，某些时候，希望组件重新渲
 <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
 ```
 
-### 五、props
+### 五、props<span id='props'></span>
 
 个人理解：组件上的属性就是props
 
@@ -432,9 +555,150 @@ function method(a,b){
 
 vue2和vue3的基础部分实际上差不多，所有关于vue的基本知识放在这里记录，vue3只做区分的记录
 
-生命周期
+### 一、基础结构
 
+#### 1、main.js
 
+![image-20220308133318417](E:\GIT\doc\笔记\img\Vue\image-20220308133318417.png)
+
+vue2的main.js可以很明显的看出，他的vue实例是new出来的，然后把组件和一些属性设置进去。
+
+- import：导入，这是js的知识，想使用什么，都需要导入进来才可以使用
+
+  - 需要被注册的可以写成这种格式，然后就可以直接使用他的名字
+
+    ```javascript
+    import 名字 from "路径"
+    ```
+
+  - 不需要被注册，仅仅只是为了项目启动是加载，比如css文件，以及一些用于配置而不需要导出的js文件，比如我个人使用的路由权限配置permission.js，就可以不需要名字
+
+    ```javascript
+    import "路径"
+    ```
+
+- Vue.use()：注册vue生态内的插件，内部必须要有install方法才可以，注册之后，会自动导出，就可以直接用this.$xxx方法，$xxx是组件内提供的方法，一般我们用来注册支持vue的ui，element或antd等
+
+- Vue.prototype：用来注册非vue生态内的插件或方法某些发是Vue.prototype.$xxx，这个可以是自定义的方法，定义后，可以直接通过this.$xxx的方式进行调用，一般用在封装后的axios工具，utils工具等
+
+- new Vue().$mount('#app')：这一步把就是实例化之后的vue对象，挂载到id为app的的html标签中，见App.vue
+
+#### 2、App.vue
+
+根页面，vue2只会生成一个vue实例，而这个app.vue就是整个vue实例的最大的页面，其他所有路由都是从这个页面控制的
+
+![image-20220308135449676](E:\GIT\doc\笔记\img\Vue\image-20220308135449676.png)
+
+- Template：在vue2中，Template标签后面必须跟着一个div标签，并且只能有一个div标签，多余的或者非div标签都会报错
+- script：就是JavaScript，这里理论上可以做一些全局的初始化操作，像上述图片那样，但是实际上并不建议这样搞，具体还是建议在main.js中进行初始化，更详细的针对vue的写法在后面讲
+- style：一般的css，但是vue中有一个属性scoped，加上后该style只会在当前组件中生效，避免组件之间的样式互相影响。还有则是在使用less的时候，需要指定一下lang="less"
+
+### 二、script中使用vue
+
+html中使用vue，在语法里面讲过了，这里主要就讲js
+
+一个vue实例一定是需要export出去的，大部分会用到的vue实例如下：
+
+```javascript
+export default {
+    name: "APP",
+    components: [],
+    props:{
+
+    },
+    data(){
+      return{
+        dataTest: '',
+        computedTest: 1,
+        size: 0,
+      }
+    },
+    methods:{
+      test(){
+
+      }
+    },
+    inject: ['provideTest'],
+    provide(){
+      return{
+        provideTest: ''
+      }
+    },
+    watch: {
+      dataTest(newVal,oldVal){
+
+      },
+      $route(){
+          
+      }
+    },
+    computed: {
+      computedTest(){
+        return this.size++;
+      }
+    },
+    created() {
+    },
+    mounted() {
+    }
+}
+```
+
+#### 1、name：
+
+组件名字，没啥用的感觉
+
+#### 2、components：
+
+引用组件，当通过import引用其他组件的时候，需要在这里也写一次
+
+#### 3、props：
+
+<a href='#props'>点这里</a>
+
+#### 4、data：
+
+当前页面中需要被双向绑定的值，可以在页面中直接通过this.dataTest调用
+
+#### 5、methods：
+
+当前页面中的方法
+
+#### 6、inject/provide：
+
+成对使用，父组件之间传值，父组件使用provide进行赋值，子组件通过inject取值，比props更强大，在于他没有深度限制，不管子组件多深，都可以取到
+
+#### 7、watch：
+
+监听事件，一般是对data中的属性进行监听，但是也可以监听路由，此外还有一个深度监听的概念，这快不熟悉，有机会再补充
+
+#### 8、computed：
+
+计算属性，和watch很像，但作用不完全一样，如上述demo中，如果size被改变了computedTest就会立马跟着改变，作为一个被动计算使用，而watch更偏向主动。此外computed在官方文档的建议中，建议用于计算props中的值，在常见的弹窗组件中，props中的值不能直接用在弹窗的show上，需要先赋值给当前组件的参数，这里就可以用计算属性来编写，不需要通过watch监听
+
+#### 9、create/mounted等一系列生命周期方法：
+
+详细请看生命周期，方法基本都能使用，在需要的时候引入他们即可。
+
+#### 10、refs：
+
+```html
+<input id="input1" name="input1" ref="input1"
+```
+
+```javascript
+this.$refs.input1
+```
+
+如上：在vue中，使用ref和在js中getElementById的方法几乎一模一样，甚至还要快
+
+#### 11、emit：
+
+对父组件提交方法，正常来说父组件需要有回调方法，都是调用子组件时加上“@方法名=this.当前组件方法(参数)”这种结构，此时子组件在处理完，想要回调父组件的方法就可以按照如下方法进行回调
+
+```javascript
+this.$emit("方法名",参数)
+```
 
 ## vue3：
 
@@ -492,7 +756,101 @@ vue3中，没有了this的用法，因为从生命周期的角度来看，sutup�
   })
   ```
 
-  
+## VueRouter：
+
+官方文档：https://router.vuejs.org/zh/guide/
+
+（1）router.js
+
+通常我们都是在router.js中配置路由，然后将它导出来到main.js中实例化，如下demo
+
+```javascript
+Vue.use(VueRouter)
+
+const routes = [
+  {
+    path: '/',
+    redirect: { path: '/novel/list' }
+  },
+  {
+    path: '/novel/list',
+    name: 'Main',
+    component: Main,
+    children:[
+      {
+        path:'/reg',
+        name:'Reg',
+        component:Reg
+      },
+      {
+        path:'/novel/person',
+        name:'PersonNovel',
+        component:PersonNovel,
+        meta:{
+          requireAuth:true
+        },
+        children:[
+          {
+            path:'/novel/person',
+            name:'PersonList',
+            component:PersonList
+          }
+        ]
+      },
+    ]
+  }
+]
+
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes
+})
+
+// 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
+export default router
+```
+
+- path：代表路径
+
+- name：路由组件的名字
+
+- redirect：重定向，如果是当前路径则重定向到某个路径下，可以是path，可以是name
+
+- component：组件，可以直接简写成一下形式，这样就不需要在一开始import了
+
+  ```javascript
+   component: () => import('../views/Main.vue'),
+  ```
+
+- children：子路由，路由是有嵌套关系的，可以在自己的组件中添加`router-view`进行字路由跳转
+
+  ps：子路由中，如果path前面带有"/"，则路由是从根开始，如果不带"/"，则是跟在他的父路由后面拼接
+
+- meta：自己定义的，某些时候路由需求权限校验，这里就写了一下，后面讲到路由权限控制的时候会提到
+
+- 剩下的一些东西，我也不太清楚，反正为了解决bug，很多时候是需要的
+
+（2）权限控制：官方文档：https://router.vuejs.org/zh/guide/advanced/navigation-guards.html
+
+个人习惯单独创建一个permission.js单独来控制路由跳转，其实没多大必要，完全可以写在router.js里面，效果一样的，单独创建文件还需要在main.js里面导入一下
+
+![image-20220308160710686](E:\GIT\doc\笔记\img\Vue\image-20220308160710686.png)
+
+- 使用router.beforeEach进行路由权限控制，这行代码会在路由发生改变的时候进入，一般我们用来做登录校验，以及权限校验
+- to：目标路由对线，这里可以拿到即将进入路由的很多属性，参数，以及你在router.js中定义的一些内容
+- from：正在离开的路由
+- next：这是一个函数，代表接下里实际要走的路由，如果我们不加参数，就会往目标进行路由，如果增加参数，则会往想要的路由进行跳转，需要注意的是，这个方法也会被本身拦截一次，需要注意死循环问题。此外就是该方法请严格控制只会调用一次next()方法。通过这个是用来跳转到权限不足的页面，或者是未登录跳转到登录页面这种操作。
+
+（3）页面中的控制
+
+- router-view：将匹配到的路由组件替换掉当前的标签，嵌套的时候注意层级关系不要弄错了，router.js中的children，就代表是他的每一层
+- router-link：类似于vuerouter中的a标签，不建议使用a标签，而是直接使用这个，虽然本人开发从来没用过这个，都是在js里面控制
 
 ## vuex：
 

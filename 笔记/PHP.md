@@ -167,3 +167,6 @@ strpos(string,find,start)
 | 数组中是否存在某个key，php中的数组相当于java中的map  | map.containsKey("")     | array_key_exists("key值","数组")                             |
 | 添加值到数组中                                       | list.add("值")          | array_push("数组","值")或arr[] = item，建议用第二种，效率高  |
 
+- 数组字符串互相转换
+  - 字符串转数组：explode($param,$arr)
+  - 数组转字符串：implode($param,$arr)
