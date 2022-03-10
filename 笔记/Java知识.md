@@ -2,7 +2,7 @@
 
 ## 一、基础语法
 
-#### **1、jdk、jre和jam**
+#### **1、jdk、jre和jvm**
 
 - jdk是面向开发人员使用的SDK（软件开发工具包），里面有很多的基础jar包；
 - JRE是Java Runtime Enviroment是指Java的运行环境，是面向Java程序的使用者，必须要有jre才可以运行jar程序；

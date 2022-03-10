@@ -700,6 +700,25 @@ this.$refs.input1
 this.$emit("方法名",参数)
 ```
 
+### 三、一些常用的写法（想到啥写啥）
+
+路由调用
+
+- 跳转
+
+  ```javascript
+  this.$router.push()
+  this.$router.go()
+  this.$router.reload()
+  ```
+
+- 取参数
+
+  ```javascript
+   this.$route.query.novelId
+   this.$route.param.novelId
+  ```
+
 ## vue3：
 
 在讲vue之前，要知道，vue3可以使用vue2的全部功能，如果你愿意，完全可以在vue3中用vue2的方式进行开发。所以关于vue的基础用法，在vue2进行过记录，可以先去<a href="#vue2">上面看看</a>
@@ -852,6 +871,27 @@ export default router
 - router-view：将匹配到的路由组件替换掉当前的标签，嵌套的时候注意层级关系不要弄错了，router.js中的children，就代表是他的每一层
 - router-link：类似于vuerouter中的a标签，不建议使用a标签，而是直接使用这个，虽然本人开发从来没用过这个，都是在js里面控制
 
+（4）js中的操作
+
+```javascript
+router.push({
+      path:'路径',
+      query:{
+          参数名:参数值,
+      }
+})
+```
+
+路由传参：
+
+- params
+
+  必须和name绑定使用
+
+- query
+
+  name和path都可以使用，参数会拼接在路径后面
+
 ## vuex：
 
 基本属性：
@@ -918,15 +958,3 @@ actions: {
 const store = useStore()
 store.dispatch('increment')
 ```
-
-路由：
-
-路由传参：
-
-- params
-
-  必须和name绑定使用
-
-- query
-
-  name和path都可以使用，参数会拼接在路径后面
