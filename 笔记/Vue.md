@@ -519,7 +519,11 @@ function method(a,b){
 
 ## vue的生命周期：
 
-没有什么比官方这张图更详细的了，不管是vue2和vue3都会是这样一个实例化过程，vue3只是运用了组合是API，这一套实例化过程是没有变化的，并且vue3也是支持这一套的用法的。![vueInit](E:\GIT\doc\笔记\img\Vue\vueInit.png)
+没有什么比官方这张图更详细的了，不管是vue2和vue3都会是这样一个实例化过程，vue3只是运用了组合是API，这一套实例化过程是没有变化的，并且vue3也是支持这一套的用法的。
+
+![vueInit](E:\GIT\doc\笔记\img\Vue\vueInit.png)
+
+![实例的生命周期](https://v3.cn.vuejs.org/images/lifecycle.svg)
 
 各个时期的意义：
 
@@ -723,9 +727,15 @@ this.$emit("方法名",参数)
 
 在讲vue之前，要知道，vue3可以使用vue2的全部功能，如果你愿意，完全可以在vue3中用vue2的方式进行开发。所以关于vue的基础用法，在vue2进行过记录，可以先去<a href="#vue2">上面看看</a>
 
-## Vue3与Vue2的区别
+VUE3引入了一个核心概念，叫组合式API，他需要通过import进行引入，最后通过一个setup入口进行使用，setup中不允许使用this，从生命周期的角度中，setup的时候，组件还没有被创建
 
-生命周期：
+在VUE3的语法中，vue2的什么data，method，生命周期函数啥的，通通可以不写了，虽然也可以用，但那属于vue2的语法，一般不建议窜着用。
+
+虽然生命周期函数不用了，但是它的生命周期依然是没有变化的，会有替代的组合式api提供使用。
+
+### 一、基础结构
+
+#### 1、生命周期组合API对比<span id='vue3api'></span>：
 
 | Vue3              | Vue2            | 描述                                                         |
 | ----------------- | --------------- | ------------------------------------------------------------ |
@@ -739,6 +749,212 @@ this.$emit("方法名",参数)
 | destroyed         | onUnmounted     | 销毁时执行                                                   |
 | onRenderTracked   |                 | 检查依赖被追踪，当render函数被调用时，会检查哪个响应式数据被收集依赖 |
 | onRenderTriggered |                 | 执行update时，会检查哪个响应式数据导致组件重新渲染           |
+
+#### 2、main.js
+
+![image-20220311095641525](E:\GIT\doc\笔记\img\Vue\image-20220311095641525.png)
+
+main的配置有很大的区别了。vue3中没有Vue.prototype的用法，都是通过use进行引入，意味着只有vue生态内的组件才可以被注册进来。有一个小细节，less也需要被use才可以正常使用
+
+#### 3、App.vue
+
+和vue2差距不大，唯一的很大差别是Template下面不规定只能有唯一的div了，可以任意写标签了
+
+### 二、setup的用法
+
+先举个完整的demo：
+
+```javascript
+import { reactive,toRefs,onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import IconComponent from "../../components/common/IconComponent";
+import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+import api from "../../api/api"
+import util from "../../utils/util"
+import FeedbackModal from "../../components/system/FeedbackModal";
+
+export default {
+    name: "MainPage",
+    components: {FeedbackModal, IconComponent,QuestionCircleOutlined},
+    setup(props,content){
+        const state=reactive({
+            historyList: [],
+            markList: [],
+            feedbackShow: false,
+            feedbackType: '',
+            showNotice: false,
+            notice: {}
+        })
+        const route = useRouter()
+        const store = useStore()
+        onMounted(()=>{
+            getOpenNotice();
+        })
+        const getOpenNotice = () => {
+            api.sysApi.getOpenNotice().then(res=>{
+                if(res){
+                    state.showNotice = true
+                    state.notice = res
+                }
+            })
+        }
+
+        const jumpMain = () => {
+            route.push("/mainPage")
+        }
+        //右上角用户信息部分
+        const getHistoryList = (type) => {
+            let param = {
+                page: 1,
+                pageSize: 5,
+                param: {
+                    recordType: type
+                }
+            }
+            api.novelApi.getHistoryList(param).then(res=>{
+                if(type === '0'){
+                    state.historyList = res.records
+                }else if(type === '1'){
+                    state.markList = res.records
+                }
+            })
+        }
+        const handleMenuClick = ({key}) => {
+            if (key === 'logout') {
+                util.confirm('退出','确认退出登录？',()=>{
+                    return new Promise((resolve, reject) => {
+                            //请求后台
+                            api.userApi.logout().then(res => {
+                                util.success("退出成功！")
+                                localStorage.clear()
+                                store.commit('clearStore')
+                                resolve()
+                            }).catch(err => {
+                                reject()
+                            })
+                        }).then(() => {
+                            route.push({name: 'Login'})
+                        }).catch(() => {
+                        });
+                })
+            }else {
+                route.push({
+                    name: key
+                })
+            }
+        }
+
+        return{
+            ...toRefs(state),
+            handleMenuClick,
+            jumpMain,
+            getHistoryList,
+        }
+    }
+}
+```
+
+#### 1、组合api的引用
+
+先举个例子看看vue3中的组合api如何引用，只有先引用才可以进行调用
+
+```javascript
+import { reactive,toRefs,onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import IconComponent from "../../components/common/IconComponent";
+import { QuestionCircleOutlined } from '@ant-design/icons-vue';
+import api from "../../api/api"
+```
+
+如上，从上到下依次为
+
+- vue中的组合api
+- vuerouter中的组合api
+- vuex中的组合api
+- 导入组件，和vue2一样
+- ant-design中icon的组合api
+- 自定义的js文件引用
+
+#### （1）vue中的组合api
+
+- ref和reactive
+
+  首先要知道vue3不像vue2中，所有属性都是响应式的，vue3只要给他绑定了响应式才会变成双向绑定，这在性能上是一大优化。
+
+  被绑定过的值实际上被封装成了一个Proxy对象，并不完全是代表所谓的值
+
+  - ref：
+
+    对某一个基本类型进行响应绑定，数组也是基本类型。
+
+    ```javascript
+    const count=ref(0)
+    console.log(count); //0
+    count.value++;
+    console.log(count)  //1
+    ```
+
+    如上，在使用时需要对这个对象的 .value 进行操作，而不能直接对对象本身进行操作
+
+  - reactive：
+
+    对复杂类型进行绑定，说白了就是对象
+
+    ```javascript
+    const state = reactive({
+    	count: 1,
+    	name: 'wpy'
+    })
+    
+    console.log(state.count); //0
+    state.count++;
+    console.log(state.count)  //1
+    ```
+
+    这种不需要对参数进行 .value ，因为reactive内部会自己对每一个属性进行 ref操作
+
+- toRow
+
+  获取被封装成对象的当前的实际值，就像前面说的，被绑定过的值实际上是一个响应对象，这个方法就是反向解包，但是官方文档中建议谨慎使用
+
+  ```javascript
+  const state = reactive({
+  	count: 1,
+  	name: 'wpy'
+  })
+  
+  console.log(state); //Proxy对象
+  console.log(toRow(state)  //原对象
+  ```
+
+- toRefs
+
+  我的理解是把一个响应式对象内部的值提出来单独作为响应式对象，并且值还指向原对象的值
+
+  ```javascript
+  const state = reactive({
+  	count: 1,
+  	name: 'wpy'
+  })
+  
+  const data=toRefs(state)
+  data.count.value++; //此时count也变成了一个响应对象，并且与state中的count也是绑定的
+  ```
+  
+- 生命周期api
+
+  <a href='#vue3api'>点击这里</a>，直接使用这里面的方法即可
+
+  
+#### （2）vuerouter中的组合api
+
+#### （3）vuex中的组合api
+
+#### 5、props和content的作用
+
+## Vue3与Vue2的区别
 
 vue3中，所有声明函数全部要在setup中编写，也就是大部分vue2的写法，监听，计算啥的全都放到setup里面去，都需要引入相关组合api，就是要import
 
