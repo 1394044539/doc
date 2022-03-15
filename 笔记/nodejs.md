@@ -1,4 +1,4 @@
-安装步骤
+## 安装步骤
 
 1、双击node的安装包进行安装，一直下一步就行，有一个设置会自己吧node放到环境变量中去
 
@@ -26,4 +26,3 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org
   rimraf node_modules
   ```
 
-  
